@@ -8,6 +8,7 @@ from database import Model
 if TYPE_CHECKING:
     from .car import Car
     from database import User
+    from .order import Order
 
 
 class CustomerCar(Model):
@@ -18,6 +19,7 @@ class CustomerCar(Model):
 
     car: Mapped["Car"] = relationship(back_populates="customer_car", lazy='joined')
     customer: Mapped["User"] = relationship(back_populates="customer_car", lazy='joined')
+    order: Mapped["Order"] = relationship(back_populates="customer_car")
 
 
 class CustomerCarFilter(Filter):

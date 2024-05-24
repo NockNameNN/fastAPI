@@ -5,12 +5,15 @@ from database import Model
 
 if TYPE_CHECKING:
     from .role_user import RoleUser
+    from database import User
 
 
 class Role(Model):
     name: Mapped[str]
 
     role_user: Mapped["RoleUser"] = relationship(back_populates="role")
+    user: Mapped["User"] = relationship(back_populates="role",
+                                        secondary="roleusers")
 
 
 class RoleFilter(Filter):

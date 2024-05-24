@@ -1,7 +1,5 @@
 from pydantic import BaseModel, ConfigDict
 
-from schemas.role import Role
-
 
 class RoleUserBase(BaseModel):
     user_id: int

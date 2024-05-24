@@ -61,6 +61,8 @@ async def delete_tables():
 if TYPE_CHECKING:
     from models.role_user import RoleUser
     from models.customer_car import CustomerCar
+    from models.order import Order
+    from models.role import Role
 
 
 class User(SQLAlchemyBaseUserTable[int], Model):
@@ -68,9 +70,18 @@ class User(SQLAlchemyBaseUserTable[int], Model):
     last_name: Mapped[str]
     patronymic: Mapped[Optional[str]]
     is_send_notify: Mapped[bool]
+    fullName: Mapped[Optional[str]] = None
 
-    role_user: Mapped["RoleUser"] = relationship(back_populates="user", lazy="joined")
+    role_user: Mapped["RoleUser"] = relationship(back_populates="user")
     customer_car: Mapped["CustomerCar"] = relationship(back_populates="customer")
+    admin_orders: Mapped[list["Order"]] = relationship(back_populates="administrator",
+                                                       foreign_keys="Order.administrator_id")
+    employee_orders: Mapped[list["Order"]] = relationship(back_populates="employee",
+                                                          foreign_keys="Order.employee_id")
+    role: Mapped["Role"] = relationship(back_populates="user",
+                                        secondary="roleusers",
+                                        lazy="joined")
+
 
 
 async def get_user_db(session: AsyncSession = Depends(session_dependency)):

@@ -8,6 +8,8 @@ from database import Model
 if TYPE_CHECKING:
     from .customer_car import CustomerCar
     from database import User
+    from service import Service
+    from order_service import OrderService
 
 
 class Order(Model):
@@ -16,15 +18,21 @@ class Order(Model):
     employee_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     status: Mapped[int]
     start_date: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), default=datetime.datetime.now())
-    end_date: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), default=datetime.datetime.now() + datetime.timedelta(days=1))
+    end_date: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    totalTime: Mapped[int]
+    totalPrice: Mapped[int]
 
     customer_car: Mapped["CustomerCar"] = relationship(back_populates="order", lazy='joined')
-    administrator: Mapped["User"] = relationship(back_populates="order",
+    administrator: Mapped["User"] = relationship(back_populates="admin_orders",
                                                  foreign_keys=[administrator_id],
                                                  lazy='joined')
-    employee: Mapped["User"] = relationship(back_populates="order",
+    employee: Mapped["User"] = relationship(back_populates="employee_orders",
                                             foreign_keys=[employee_id],
                                             lazy='joined')
+    order_service: Mapped["OrderService"] = relationship(back_populates="order")
+    services: Mapped[list["Service"]] = relationship(back_populates="orders",
+                                                     secondary="orderservices",
+                                                     lazy="joined")
 
 
 class OrderFilter(Filter):

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
 from schemas.car import Car
-from schemas.user import User
+from schemas.user import UserInformation, User
 
 
 class CustomerCarBase(BaseModel):
@@ -19,7 +19,7 @@ class CustomerCar(CustomerCarBase):
 
     id: int
     car: Car
-    customer: User
+    customer: UserInformation
 
 
 class CustomerCarUpdate(CustomerCarBase):

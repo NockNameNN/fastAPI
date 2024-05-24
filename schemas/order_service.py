@@ -1,8 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class OrderServiceBase(BaseModel):
-    name: str
+    service_id: int
+    order_id: int
 
 
 class OrderServiceCreate(OrderServiceBase):
@@ -10,7 +11,11 @@ class OrderServiceCreate(OrderServiceBase):
 
 
 class OrderService(OrderServiceBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
 
-    class Config:
-        orm_mode = True
+
+class OrderServiceUpdate(OrderServiceBase):
+    service_id: int = None
+    order_id: int = None
