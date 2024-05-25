@@ -11,6 +11,7 @@ class OrderBase(BaseModel):
 
     status: int
 
+
 class OrderCreate(OrderBase):
     administrator_id: int
     customer_car_id: int
@@ -41,7 +42,6 @@ class Order(OrderBase):
     @field_validator('end_date')
     def validate_end_date(cls, v, values):
         return values.data["start_date"] + datetime.timedelta(minutes=sum(service.time for service in values.data["services"]))
-
 
 
 class OrderUpdate(OrderBase):

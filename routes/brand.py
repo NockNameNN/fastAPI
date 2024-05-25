@@ -14,6 +14,7 @@ router = APIRouter(
 )
 
 current_user = fastapi_users.current_user()
+current_superuser = fastapi_users.current_user(active=True, superuser=True)
 
 async def get_brand_by_id(brand_id: int,
                           session: AsyncSession = Depends(scoped_session_dependency)) -> Brand:
@@ -43,7 +44,8 @@ async def get_brand(brand: Brand = Depends(get_brand_by_id)):
 @router.post("/", response_model=Brand, status_code=status.HTTP_201_CREATED)
 async def create_brand(
         brand_in: BrandCreate,
-        session: AsyncSession = Depends(scoped_session_dependency)):
+        session: AsyncSession = Depends(scoped_session_dependency),
+        user: User = Depends(current_superuser)):
     return await crud.create_brand(session=session, brand_in=brand_in)
 
 
