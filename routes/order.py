@@ -3,15 +3,17 @@ from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.order import OrderFilter
+from routes.user import fastapi_users
 from schemas.order import Order, OrderCreate, OrderUpdate
 from crud import order as crud
-from database import scoped_session_dependency
+from database import scoped_session_dependency, User
 
 router = APIRouter(
     prefix="/orders",
     tags=["Заказы"]
 )
 
+current_active_user = fastapi_users.current_user(active=True)
 
 async def get_order_by_id(order_id: int,
                           session: AsyncSession = Depends(scoped_session_dependency)) -> Order:
@@ -33,9 +35,11 @@ async def get_orders(
 
 
 @router.get("/{order_id}/", response_model=Order)
-async def get_order(order: Order = Depends(get_order_by_id)):
-    return order
-
+async def get_order(order: Order = Depends(get_order_by_id),
+                    user: User = Depends(current_active_user)):
+    if user.id == order.customer_car.customer.id:
+        return order
+    return None
 
 @router.post("/", response_model=Order, status_code=status.HTTP_201_CREATED)
 async def create_order(
